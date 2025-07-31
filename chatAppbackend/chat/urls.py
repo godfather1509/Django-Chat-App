@@ -10,6 +10,7 @@ urlpatterns = [
     path('users/', UserListView.as_view(), name='user-list'),
     # this will return list of users
     path('get_user/',get_user),
+    # get simgle user
     path('auth/token/', TokenObtainPairView.as_view(),name='token_obtain_pair'),
     # this will take user credentials and return auth token
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),

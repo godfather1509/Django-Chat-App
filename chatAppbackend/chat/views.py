@@ -105,7 +105,7 @@ class MessageListCreateView(generics.ListCreateAPIView):
         # get conversation_id from url
         conversation = self.get_conversation(conversation_id)
         # get conversation from db
-        return conversation.messages.order_by("timestamp")
+        return conversation.messages.order_by("time_stamp")
         # returns all the messages in conversation sorted as per times
 
     def get_serializer_class(self):

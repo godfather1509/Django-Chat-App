@@ -55,8 +55,9 @@ class MessageSerializer(serializers.ModelSerializer):
         )
 
     def get_participants(self, obj):
-        return UserListSerializer(obj.conversation.objects.all(), many=True).data
-
+        # obj is the instance of Message model
+        return UserListSerializer(obj.conversation.participants.all(), many=True).data
+        # we get conversation associated with passed message instance and participants in that conversation
 
 class CreateMessageSerializer(serializers.ModelSerializer):
     # creates Messagein db

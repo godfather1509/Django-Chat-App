@@ -34,7 +34,7 @@ const Navbar = () => {
 
     return (
         <>
-            <nav className="bg-[#2E2E2E] text-white shadow-md border-b border-[#383838]">
+            <nav className="bg-[#2E2E2E] fixed w-full top-0 start-0 z-20 text-white shadow-md border-b border-[#383838]">
 
                 <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
                     <NavLink to={isLoggedIn ? "/conversations" : "/"} className="flex items-center space-x-3 rtl:space-x-reverse">

@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+:root {
+  font-family: system-ui;
+  /* line-height: 1.5; */
+  font-weight: 400;
+  color: black;
+  background-color: rgb(166, 199, 164);
+}

@@ -41,16 +41,16 @@ const router = createBrowserRouter(
           </ProtectedRoutes>
         </>
     },
-    {
-      // path: "/chat/:id",
-      path: "/chat",
-      element: <>
-        <Navbar />
-        <ProtectedRoutes>
-          <ChatPage />
-        </ProtectedRoutes>
-      </>
-    },
+    // {
+    //   // path: "/chat/:id",
+    //   path: "/chat",
+    //   element: <>
+    //     <Navbar />
+    //     <ProtectedRoutes>
+    //       <ChatPage />
+    //     </ProtectedRoutes>
+    //   </>
+    // },
     {
       path: "/forgotpassword",
       element: <>

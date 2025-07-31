@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form"
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Eye, EyeOff } from "lucide-react";
 import { SiGoogle } from "react-icons/si";
 import { Link, useNavigate } from 'react-router-dom'
@@ -32,6 +32,16 @@ const Home = () => {
     const handleGoogleLogin = () => {
         console.log("Login")
     }
+
+    useEffect(()=>{
+        const checkLogin=()=>{
+            const isLogin=localStorage.getItem('login')
+            if(isLogin){
+                navigate("/conversations")
+            }
+        }
+        checkLogin()
+    },[])
 
     const togglePassword = () => setShowPassword(prev => !prev);
 

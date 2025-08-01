@@ -9,6 +9,7 @@ const Conversation = () => {
     const [no_conversation, setNoConversation] = useState(0)
     const [conversations, setConversation] = useState([])
     const [message, setMessage] = useState([])
+    const [conversationId, setConversationId]=useState(0)
 
     useEffect(() => {
 
@@ -44,6 +45,7 @@ const Conversation = () => {
 
     const getMessages = async (conversation) => {
         // console.log(conversation.id)
+        setConversationId(conversation.id)
         const messages = await api.get(`conversations/${conversation.id}/messages/`)
         // console.log(messages.data)
         setView(true)
@@ -56,7 +58,7 @@ const Conversation = () => {
                 {/* Sidebar */}
                 <aside className="w-full max-w-md p-4 bg-[#3A3A3A] border border-gray-200 shadow-sm sm:p-8 dark:border-gray-700 overflow-y-auto max-h-[calc(100vh)]">
 
-                    <header className="flex items-center justify-between mb-4">
+                    <header className="flex items-center justify-between mb-4 mt-12">
                         <h5 className="text-xl font-bold leading-none text-white">All Contacts</h5>
                     </header>
 
@@ -132,7 +134,7 @@ const Conversation = () => {
 
                 {/* Chat Area */}
                 {view ? (<main className="flex-1 bg-gray-100 dark:bg-gray-900">
-                    <ChatPage messages={message} />
+                    <ChatPage messages={message} conversationId={conversationId} />
                 </main>) : null}
             </div>
         </>

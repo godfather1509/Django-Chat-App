@@ -15,8 +15,11 @@ const ChatPage = ({ messages, conversationId }) => {
     const [emojiMenu, setEmojiMenu] = useState(false);
     const [message, setMessage] = useState("")
     const [msgContent, setContent] = useState([])
+    const [typingUser, setTypingUser]=useState(null)
+    const [onlineUser,setOnlineUsers]=useState([])
     const [socket, setSocket] = useState(null)
     const textRef = useRef(null)
+    const typingTimeoutRef=useRef(null)
 
     const handelMessages = () => {
         const newMsg = messages.map((msg) => {
@@ -120,15 +123,33 @@ const ChatPage = ({ messages, conversationId }) => {
                             content: text,
                             timeStamp
                         }
-                    ])
+                    ]);
+                }
+                else if(data.type==='typing'){
+                    const{user, receiver}=data;
+
+                    if(typingTimeoutRef.current){
+                        clearTimeout(typingTimeoutRef.current)
+                    }
                 }
             }
             catch (error) {
                 console.error("Error parsing websocket message:", error)
             }
-        }
 
-        setSocket(websocket)
+            websocket.onerror=(error)=>{
+                console.error("Websocket Error:", error)
+            }
+
+            setSocket(websocket)
+
+            return()=>{
+                if(typingTimeoutRef.current){
+                    clearTimeout(typingTimeoutRef.current)
+                }
+                websocket.close()
+            }
+        }
     }, [])
 
     return (

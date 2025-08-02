@@ -15,7 +15,7 @@ const ChatPage = ({ messages, conversationId }) => {
     const textRef = useRef(null);
     const typingTimeoutRef = useRef(null);
     const chatEndRef = useRef(null);
-    const copyRef=useRef(null);
+    const copyRef = useRef(null);
 
     const username = localStorage.getItem("username");
 
@@ -72,6 +72,19 @@ const ChatPage = ({ messages, conversationId }) => {
             return;
         }
 
+        // const timeStamp = new Date()
+
+        // setContent((prevMessage) => [
+        //     ...prevMessage,
+        //     {
+        //         sender: convoSender,
+        //         content: data,
+        //         time: timeStamp.toLocaleTimeString(),
+        //         date: timeStamp.toLocaleDateString(),
+        //         isSender: true,
+        //     }
+        // ]);
+
         if (socket?.readyState === WebSocket.OPEN) {
             const payload = {
                 type: "chat_message",
@@ -123,19 +136,18 @@ const ChatPage = ({ messages, conversationId }) => {
 
         websocket.onmessage = (event) => {
             try {
+                // this will run when server sends some data
                 const data = JSON.parse(event.data);
 
                 if (data.type === "chat_message") {
-                    const { text, user, timeStamp } = data;
-
                     setContent((prevMessage) => [
                         ...prevMessage,
                         {
-                            sender: user,
-                            content: text,
-                            time: new Date(timeStamp).toLocaleTimeString(),
-                            date: new Date(timeStamp).toLocaleDateString(),
-                            isSender: user.username === username,
+                            sender: data.user,
+                            content: data.message,
+                            time: new Date(data.time_stamp).toLocaleTimeString(),
+                            date: new Date(data.time_stamp).toLocaleDateString(),
+                            isSender: data.user.username === username,
                         }
                     ]);
                 } else if (data.type === "typing") {
@@ -167,6 +179,7 @@ const ChatPage = ({ messages, conversationId }) => {
             websocket.close();
         };
     }, [conversationId]);
+
 
     return (
         <>

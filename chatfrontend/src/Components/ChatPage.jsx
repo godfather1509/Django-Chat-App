@@ -5,21 +5,30 @@ import { ACCESS_TOKEN } from "../../token";
 
 const ChatPage = ({ messages, conversationId }) => {
     const [showDropdown, setShowDropdown] = useState(null);
+    // for displaying message menu
     const [emojiMenu, setEmojiMenu] = useState(false);
+    // for displaying emoji menu 
     const [message, setMessage] = useState("");
+    // holds message to be sent
     const [msgContent, setContent] = useState([]);
+    // holds message to be displayed
     const [typingUser, setTypingUser] = useState(null);
     const [socket, setSocket] = useState(null);
     const [convoReceiver, setConvoReceiver] = useState({});
+    // receiver in this conversation
     const [convoSender, setConvoSender] = useState({})
+    // sender in this conversation
+
     const textRef = useRef(null);
+    // to handle message form
     const typingTimeoutRef = useRef(null);
     const chatEndRef = useRef(null);
-    const copyRef = useRef(null);
+    // to scroll down to last message
 
     const username = localStorage.getItem("username");
 
     const handelMessages = () => {
+        // here we are adding fields to messages as per our need
         const newMsg = messages.map((msg) => {
             const timeStamp = msg.time_stamp;
             const dateObj = new Date(timeStamp);
@@ -27,6 +36,7 @@ const ChatPage = ({ messages, conversationId }) => {
             setConvoReceiver(msg.participants.find((participant) => username !== participant.username))
             setConvoSender(msg.participants.find((participant) => username === participant.username))
             const isSender = msg.sender.username === username;
+            // check if logged in user sending the meesage
 
             return {
                 ...msg,
@@ -34,28 +44,37 @@ const ChatPage = ({ messages, conversationId }) => {
                 receiver,
                 date: dateObj.toLocaleDateString(),
                 time: dateObj.toLocaleTimeString(),
+                // return original array with new fields added
             };
         });
         setContent(newMsg);
+        // update new array
     };
 
     useEffect(() => {
         handelMessages();
+        // run handelMessages() whenever we receive new messages
     }, [messages]);
 
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        // to scroll down to last message on rendering
     }, [msgContent]);
 
     const handleEmoji = (emojiObj) => {
+        // this handles emoji insertion in our text
         const emoji = emojiObj.emoji;
+        // retrieve emoji
         const ref = textRef.current;
+        // this gives whole html tag that was referenced to textRef
         const currentText = ref.value;
+        // current value in tag
         const start = ref.selectionStart;
         const end = ref.selectionEnd;
         const newText = currentText.substring(0, start) + emoji + currentText.substring(end);
         // insert emoji in between text
         setMessage(newText);
+        // update message field with new value
         setTimeout(() => {
             // position the cursor after the last typed emoji
             const cursorPos = start + emoji.length;
@@ -66,26 +85,15 @@ const ChatPage = ({ messages, conversationId }) => {
     };
 
     const sendMessage = async (data) => {
-
+        // send message to server
         if (!data.trim()) {
             console.error("Empty Message");
             return;
+            // return if message field is empty
         }
 
-        // const timeStamp = new Date()
-
-        // setContent((prevMessage) => [
-        //     ...prevMessage,
-        //     {
-        //         sender: convoSender,
-        //         content: data,
-        //         time: timeStamp.toLocaleTimeString(),
-        //         date: timeStamp.toLocaleDateString(),
-        //         isSender: true,
-        //     }
-        // ]);
-
         if (socket?.readyState === WebSocket.OPEN) {
+            // if websocket is open send message
             const payload = {
                 type: "chat_message",
                 message: data,
@@ -109,6 +117,7 @@ const ChatPage = ({ messages, conversationId }) => {
     };
 
     const handleDelete = async (msgId) => {
+        // delete the message from chat
         try {
             const response = await api.delete(`conversations/${conversationId}/messages/${msgId}`);
             if (response.status === 204) {
@@ -121,13 +130,16 @@ const ChatPage = ({ messages, conversationId }) => {
     };
 
     const handleCopy = (text) => {
+        // copy the message
         window.navigator.clipboard.writeText(text)
         setShowDropdown(null)
     }
 
     useEffect(() => {
+
         const token = localStorage.getItem(ACCESS_TOKEN);
         const websocket = new WebSocket(`ws://localhost:8000/ws/chat/${conversationId}/?token=${token}`);
+        // open the connection with websocket
 
         websocket.onopen = () => {
             // console.log("Websocket connection established");
@@ -135,6 +147,7 @@ const ChatPage = ({ messages, conversationId }) => {
         };
 
         websocket.onmessage = (event) => {
+            // triggered when message is sent by server
             try {
                 // this will run when server sends some data
                 const data = JSON.parse(event.data);
@@ -150,15 +163,12 @@ const ChatPage = ({ messages, conversationId }) => {
                             isSender: data.user.username === username,
                         }
                     ]);
+                    // add new message to list of sent message
                 } else if (data.type === "typing") {
-                    const { user } = data;
-
-                    setTypingUser(user);
-
+                    setTypingUser(data.user);
                     if (typingTimeoutRef.current) {
                         clearTimeout(typingTimeoutRef.current);
                     }
-
                     typingTimeoutRef.current = setTimeout(() => {
                         setTypingUser(null);
                     }, 1000);
@@ -185,7 +195,7 @@ const ChatPage = ({ messages, conversationId }) => {
         <>
             <div className="pt-16 h-[calc(100vh-64px)] overflow-y-auto pb-2">
                 {msgContent.map((msg, index) => (
-                    <div key={index} ref={copyRef} className={`flex items-start gap-2.5 p-4 ${msg.isSender ? 'justify-end' : ''}`}>
+                    <div key={index} className={`flex items-start gap-2.5 p-4 ${msg.isSender ? 'justify-end' : ''}`}>
                         {!msg.isSender && (
                             <img className="w-8 h-8 rounded-full" src="/profile.jpg" alt="User profile" />
                         )}

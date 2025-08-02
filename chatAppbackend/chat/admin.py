@@ -14,6 +14,8 @@ class ConversationAdmin(admin.ModelAdmin):
     list_display = ("get_participants", "created_at")
     inlines = [MessageLine]
 
+class MessageAdmin(admin.ModelAdmin):
+    list_display=("sender","content","time_stamp")
 
 admin.site.register(Conversation, ConversationAdmin)
-admin.site.register(Message)
+admin.site.register(Message, MessageAdmin)

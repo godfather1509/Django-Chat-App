@@ -1,8 +1,17 @@
-const NotFound=()=>{
-    return(
+import { useNavigate } from "react-router-dom";
+
+
+const NotFound = () => {
+
+    const navigate = useNavigate()
+    return (
 
         <>
-        <p>404 Not Found</p>
+            {
+                localStorage.getItem('login') ? (<p>404 Not Found</p>) :
+                    navigate("/")
+            }
+
         </>
     )
 }

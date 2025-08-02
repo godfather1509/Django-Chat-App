@@ -32,6 +32,7 @@ class Conversation(models.Model):
     participants = models.ManyToManyField(User, related_name="conversation")
     # when multiple of objects from 1 model are related to multiple objects from another model we use Many-to-Many relationship
     created_at = models.DateTimeField(auto_now=True)
+    # auto_now updates the field everytime data is saved in model
     objects = ConversationManager()
 
     def __str__(self):
@@ -60,6 +61,10 @@ class Message(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()
     time_stamp = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.conversation.save()
 
     def __str__(self):
         return f"Message from {self.sender.username}"

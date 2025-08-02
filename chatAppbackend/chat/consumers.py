@@ -222,7 +222,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 {
                     "type": "typing",
                     "user": user,
-                    "receiver": receiver,
+                    "receiver": receiver_id,
                     "is_typing": is_typing,
                 }
             )

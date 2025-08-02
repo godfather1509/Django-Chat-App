@@ -6,7 +6,7 @@ const ProtectedRoutes = ({ children }) => {
     const userLogin = localStorage.getItem('login')
     return (
 
-        userLogin ? children : <Navigate to="/home" />
+        userLogin ? children : <Navigate to="/" />
 
     )
 }

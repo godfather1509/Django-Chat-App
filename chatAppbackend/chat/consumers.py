@@ -68,17 +68,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
         else:
             await self.close(code=4002)  # close the connection if no token is provided
             return
+        # all this was just for validating and getting user from database 
+        
+        # for setting up public websocket connection only conversation_id and room_group_name needs to be set
 
         self.conversation_id = self.scope["url_route"]["kwargs"]["conversation_id"]
         # Get 'conversation_id' from the WebSocket URL path using scope
         # scope → url_route → kwargs → conversation_id
         self.room_group_name = f"chat_{self.conversation_id}"
         # name group name as conversation_id
-
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         # Add this WebSocket connection (identified by channel_name) and group_name(conversation_id) to channel_layer 
         # if some other user with same group_name(conversation_id) is added to channel_layer() then both will become part of same group/conversation
-        
         await self.accept() # await will pause the program execution till instruction is executed
         # accept connection to client
 
@@ -88,12 +89,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_send(
             self.room_group_name,
             {"type": "online_status", "online_users": [user_data], "status": "online"},
-        )
+        ) # sending data to client
         # after connection is succesful we send all the users online(users currently added in group/channel_layer) to client
 
     async def disconnect(self, close_code):
         # this method is called to disconnect server with client
-
         if hasattr(self, "room_group_name"):
             # this checks if 'self' instance has a attribute named 'room_group_name'
             # this is an additional check to make sure user is connected before trying to disconnect
